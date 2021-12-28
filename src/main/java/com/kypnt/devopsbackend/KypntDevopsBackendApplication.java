@@ -11,7 +11,7 @@ public class KypntDevopsBackendApplication {
 	}
 
 	public static void main(String[] args) {
-	System.out.println(new App3().getMessage());
+	return message;
 	}
 
 	private final String getMessage() {
