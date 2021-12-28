@@ -37,11 +37,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend
  
-  CreateRelease:
-    name: CreateRelease
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Extract Maven project version
         id: project
         run: |
@@ -76,3 +71,13 @@ jobs:
           release_name: Release ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
+
+  CreateRelease:
+    name: CreateRelease
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Extract Maven project version
+        id: project
+        run: |
+          echo "Finish ${{ steps.date.outputs.date }}"
