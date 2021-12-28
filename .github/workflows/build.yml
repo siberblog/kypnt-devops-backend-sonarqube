@@ -20,32 +20,29 @@ jobs:
           java-version: 11
         
       - name: Extract Maven project version
-        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        run: |
+          echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
         id: project
       - name: Show extracted Maven project version
-        run: echo ${{ steps.project.outputs.version }}
+        run: |
+          echo "Project name: ${{ steps.project.outputs.name }}"
+          echo "Project version: ${{ steps.project.outputs.version }}"
 
-
-      - name: Declare some variables
+      - name: Extract Branch name and short_sha project version
         id: vars
         shell: bash
         run: |
           echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      - name: Another step
+      - name: Show Branch name and short_sha
         run: |
           echo "Branch: ${{ steps.vars.outputs.branch }}"
           echo "Sha: ${{ steps.vars.outputs.sha_short }}"
 
-      - name: Get short SHA
-        id: slug
-        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
-
-      - name: Publish artifact
+      - name: Generate Relase number 
         run: |
-          echo "GITHUB_SHA_SHORT=${steps.slug.outputs.sha8}"
-          echo "GITHUB_SHA_SHORT=$GITHUB_SHA"
-
+          echo "Release Number: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}"
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
