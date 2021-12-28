@@ -32,11 +32,8 @@ jobs:
         
       - name: Generate Relase number
         env:
-          RELEASE_VERSION2: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
-        run: |
-          echo "RELEASE_VERSION=${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}" >> $GITHUB_ENV
-          echo "Release Number: ${{ env.RELEASE_VERSION }}"
-          echo "Release Number2: ${{ env.RELEASE_VERSION2 }}"
+          RELEASE_VERSION: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -67,6 +64,7 @@ jobs:
           release_name: Release ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
+          
   PushDockerHub:
     name: PushDockerHub
     runs-on: ubuntu-latest
