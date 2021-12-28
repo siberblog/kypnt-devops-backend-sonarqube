@@ -12,15 +12,15 @@ public class KypntDevopsBackendApplication {
 
 }
 
-public class App
+public class App1
 {
 
     private final String message = "Hello World from Java Maven Project!";
 
-    public App() {}
+    public App1() {}
 
     public static void main(String[] args) {
-        System.out.println(new App().getMessage());
+        System.out.println(new App1().getMessage());
     }
 
     private final String getMessage() {
@@ -29,15 +29,15 @@ public class App
 
 }
 
-public class App
+public class App2
 {
 
     private final String message = "Hello World from Java Maven Project!";
 
-    public App() {}
+    public App2() {}
 
     public static void main(String[] args) {
-        System.out.println(new App().getMessage());
+        System.out.println(new App2().getMessage());
     }
 
     private final String getMessage() {
@@ -46,15 +46,15 @@ public class App
 
 }
 
-public class App
+public class App3
 {
 
     private final String message = "Hello World from Java Maven Project!";
 
-    public App() {}
+    public App3() {}
 
     public static void main(String[] args) {
-        System.out.println(new App().getMessage());
+        System.out.println(new App3().getMessage());
     }
 
     private final String getMessage() {
