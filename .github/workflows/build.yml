@@ -25,6 +25,28 @@ jobs:
       - name: Show extracted Maven project version
         run: echo ${{ steps.project.outputs.version }}
 
+
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - name: Another step
+        run: |
+          echo "Branch: ${{ steps.vars.outputs.branch }}"
+          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
+
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+      - name: Publish artifact
+        run: |
+          echo "GITHUB_SHA_SHORT=${steps.slug.outputs.sha8}"
+          echo "GITHUB_SHA_SHORT=$GITHUB_SHA"
+
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
