@@ -1,10 +1,8 @@
-name: Build
+name: Release
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ master ]
+
 jobs:
   build:
     name: Build
@@ -20,29 +18,21 @@ jobs:
           java-version: 11
         
       - name: Extract Maven project version
+        id: project
         run: |
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
-        id: project
-      - name: Show extracted Maven project version
-        run: |
-          echo "Project name: ${{ steps.project.outputs.name }}"
-          echo "Project version: ${{ steps.project.outputs.version }}"
+       
 
-      - name: Extract Branch name and short_sha project version
+      - name: Extract short_sha project version
         id: vars
         shell: bash
         run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      - name: Show Branch name and short_sha
-        run: |
-          echo "Branch: ${{ steps.vars.outputs.branch }}"
-          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
-
-      - name: Generate Relase number 
-        run: |
-          echo "Release Number: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}"
+        
+      - name: Generate Relase number
+        env:
+          RELEASE_VERSION: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -63,3 +53,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: Release ${{ env.RELEASE_VERSION }}
+          draft: false
+          prerelease: false
+          
+  PushDockerHub:
+    name: PushDockerHub
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Show Branch name and short_sha
+        run: |
+          echo "Branch: ${{ steps.vars.outputs.branch }}"
+          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
+
