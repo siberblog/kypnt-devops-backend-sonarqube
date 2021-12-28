@@ -56,8 +56,16 @@ jobs:
         
       - name: Generate Relase number
         env:
-          RELEASE_VERSION: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
-        run: echo $(env.RELEASE_VERSION)
+          RELEASE_VERSION2: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
+        run: |
+          echo "RELEASE_VERSION=${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}" >> $GITHUB_ENV
+          echo "1 Release1: $RELEASE_VERSION"
+          echo $(env.RELEASE_VERSION)
+          echo "1 Release3: ${{ env.RELEASE_VERSION }}"
+          
+          echo "2 Release1: $RELEASE_VERSION"
+          echo $(env.RELEASE_VERSION)
+          echo "2 Release3: ${{ env.RELEASE_VERSION }}"
     
       - name: Create Release
         id: create_release
