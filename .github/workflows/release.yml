@@ -75,5 +75,5 @@ jobs:
       - name: Extract Maven project version
         id: project
         run: |
-          echo "Finish date:" ${{ steps.date.outputs.date }}"
+          echo "Finish date: ${{ steps.date.outputs.date }}"
           echo $(date +'%Y-%m-%d')
