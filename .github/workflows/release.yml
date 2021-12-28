@@ -2,7 +2,6 @@ name: Release
 on:
   push:
     branches: [ master ]
-
 jobs:
   build:
     name: Build
@@ -33,7 +32,8 @@ jobs:
       - name: Generate Relase number
         env:
           RELEASE_VERSION: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
-
+        run: echo ${{ env.RELEASE_VERSION }}
+        
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
