@@ -40,9 +40,10 @@ jobs:
           echo "Branch: ${{ steps.vars.outputs.branch }}"
           echo "Sha: ${{ steps.vars.outputs.sha_short }}"
 
-      - name: Generate Relase number 
-        run: |
+      - name: Generate Relase number
+        env:
           RELEASE_VERSION=${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
+        run: |
           echo "Release Number1: $RELEASE_VERSION"
           echo "Release Number2: ${{ env.RELEASE_VERSION }}"
 
