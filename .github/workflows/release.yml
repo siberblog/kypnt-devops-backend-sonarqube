@@ -62,7 +62,6 @@ jobs:
           echo "1 Release1: $RELEASE_VERSION"
           echo $(env.RELEASE_VERSION)
           echo "1 Release3: ${{ env.RELEASE_VERSION }}"
-          
           echo "2 Release1: $RELEASE_VERSION"
           echo $(env.RELEASE_VERSION)
           echo "2 Release3: ${{ env.RELEASE_VERSION }}"
