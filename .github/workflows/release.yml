@@ -1,10 +1,8 @@
-name: Build
+name: Release
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ master ]
+
 jobs:
   build:
     name: Build
@@ -20,33 +18,21 @@ jobs:
           java-version: 11
         
       - name: Extract Maven project version
+        id: project
         run: |
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
-        id: project
-      - name: Show extracted Maven project version
-        run: |
-          echo "Project name: ${{ steps.project.outputs.name }}"
-          echo "Project version: ${{ steps.project.outputs.version }}"
+       
 
-      - name: Extract Branch name and short_sha project version
+      - name: Extract short_sha project version
         id: vars
         shell: bash
         run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      - name: Show Branch name and short_sha
-        run: |
-          echo "Branch: ${{ steps.vars.outputs.branch }}"
-          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
-
+        
       - name: Generate Relase number
         env:
-          RELEASE_VERSION2: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
-        run: |
-          echo "RELEASE_VERSION=${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}" >> $GITHUB_ENV
-          echo "Release Number: ${{ env.RELEASE_VERSION }}"
-          echo "Release Number2: ${{ env.RELEASE_VERSION2 }}"
+          RELEASE_VERSION: ${{ steps.project.outputs.name }}.${{ steps.project.outputs.version }}.${{ steps.vars.outputs.sha_short }}
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -78,6 +64,7 @@ jobs:
           release_name: Release ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
+          
   PushDockerHub:
     name: PushDockerHub
     runs-on: ubuntu-latest
@@ -87,3 +74,4 @@ jobs:
         run: |
           echo "Branch: ${{ steps.vars.outputs.branch }}"
           echo "Sha: ${{ steps.vars.outputs.sha_short }}"
+
