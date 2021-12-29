@@ -52,7 +52,7 @@ jobs:
           
       - name: Sonuclar
         run: |
-          echo "${{ steps.sonar_analyze_result.outputs }}" | grep -o "QUALITY GATE STATUS: PASSED"
+          echo ${{ steps.sonar_analyze_result.outputs }} | grep -o "QUALITY GATE STATUS: PASSED"
   
 
           
