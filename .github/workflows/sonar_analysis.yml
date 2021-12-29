@@ -27,15 +27,19 @@ jobs:
       
       - name: Extract project name in Maven-pom.xml file
         id: pom
-        run: echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
-       
+        run: |
+          echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
+          echo ::set-output name=sonar_organization::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.properties.sonar.organization}' --non-recursive exec:exec)
+
       - name: Code verify and sonar analyze
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-           PROJECT_KEY: ${{ steps.pom.outputs.name }}
+           PROJECT_NAME: ${{ steps.pom.outputs.name }}
+           SONAR_ORGANIZATION: ${{ steps.pom.outputs.sonar_organization }}
+           
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-          -Dsonar.projectKey=${{ steps.pom.outputs.name }}
+          -Dsonar.projectKey=$SONAR_ORGANIZATION_$PROJECT_NAME
           -Dsonar.qualitygate.wait=true 
           -Dmaven.test.skip=true 
 
