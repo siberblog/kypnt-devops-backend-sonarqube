@@ -49,13 +49,16 @@ jobs:
                         -Dsonar.qualitygate.wait=true \
                         -Dmaven.test.skip=true
                                             )\n"
-        
+          echo ${{ steps.sonar_analyze_result.outputs.result }}
           
       # RESULT=$()
       # echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED"
           
       - name: Sonuclar
         run: |
+          echo "\n\n\n\"          
+          echo ${{ steps.sonar_analyze_result.outputs.result }}
+          echo "\n\n\n\"          
           echo ${{ steps.sonar_analyze_result.outputs.result }} | grep -o "QUALITY GATE STATUS: PASSED"
   
 
