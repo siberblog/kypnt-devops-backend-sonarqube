@@ -78,10 +78,23 @@ jobs:
               ::exit::failure
           fi
           
-      - name: Next step   
-        if: contains( needs.build.outputs.sonar_gate_result, 'PASSED')
+      - name: Docker login
+        env:
+          DOCKERHUB_USER: ${{secrets.DOCKERHUB_USERNAME}}
+          DOCKERHUB_PASS: ${{secrets.DOCKERHUB_PASSWORD}}
         run: |
-          echo "Bir sonraki asamaya geldin"
+          docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+          
+      - name: Build the Docker image  
+        run: |
+          pwd
+          docker build . --file Dockerfile --tag=sibeblog/aaa
+          docker tag ariomer/sonarqubetest:${{ github.sha }} ariomer/sonarqubetest:latest
+          
+      - name: Docker Push
+        run: |
+          docker push ariomer/sonarqubetest:${{ github.sha }}
+          docker push ariomer/sonarqubetest:latest
 
 
 
