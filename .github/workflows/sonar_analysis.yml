@@ -42,15 +42,14 @@ jobs:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true
+          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true > result.txt
   
   build_artifact:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - run: |
-          echo ${{ needs.build.result }}
-          grep "QUALITY GATE STATUS" ${{ needs.build.result }}
+         grep "QUALITY GATE STATUS" result.txt 
       
       
       
