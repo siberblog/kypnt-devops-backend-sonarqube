@@ -69,7 +69,7 @@ jobs:
           
       - name: Check Quality Gate result and Login Build, Push and Deploy
         run: |
-          if contains( needs.build.outputs.sonar_gate_result, 'PASSED') ; then
+          if contains( needs.build.outputs.sonar_gate_result, 'PASSED') == true ; then
               echo "Evet"
           else
               echo "Hayir"
