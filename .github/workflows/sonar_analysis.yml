@@ -29,11 +29,11 @@ jobs:
         id: pom
         run: |
           echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
-          echo ::set-output name=organization::$(mvn -q -Dexec.executable=echo -Dexec.args='${project}' exec:exec)
+          echo ::set-output name=organization::$(cat pom.xml | grep "<sonar.organization>")
       
       - name: Maven-pom.xml 
         run: |
-          echo ${{ steps.pom.outputs.sonar_organization }}
+          echo ${{ steps.pom.outputs.organization }}
           echo ${{ steps.pom.outputs.name }}
           
       
