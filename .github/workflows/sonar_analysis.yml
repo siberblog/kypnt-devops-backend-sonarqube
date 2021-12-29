@@ -38,6 +38,7 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}"         
       
       - name: Code verify and sonar analyze
+        id: testt
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -48,7 +49,10 @@ jobs:
                         -Dmaven.test.skip=true \
                   )
           echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED"
-                  
+          
+      - name: tessttt
+        run: |
+          echo "${{ steps.testt.outputs }}"   
   
 
           
