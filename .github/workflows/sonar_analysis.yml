@@ -1,3 +1,4 @@
+# maven project template
 name: sonar_analysis
 on:
   pull_request:
@@ -5,8 +6,10 @@ on:
     
 jobs:
   build:
-    name: Build
+    name: build
     runs-on: ubuntu-latest
+    outputs: 
+      sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -23,10 +26,25 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+      
+      - name: Extract project name in Maven pom.xml file
+        id: pom
+        run: |
+          echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
+          echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
+        # echo ::set-output name=name_old::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
           
+      - name: Maven-pom.xml 
+        run: |
+          echo "Project name: ${{ steps.pom.outputs.name }}"
+          echo "Sonar organization: ${{ steps.pom.outputs.organization }}"         
+      
       - name: Code verify and sonar analyze
+        id: sonar_analyze_result
         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify -Dmaven.test.skip=true org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                      -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
+                      -Dmaven.test.skip=true 
