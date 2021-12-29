@@ -57,9 +57,12 @@ jobs:
       - name: Generate Relase number
         id: generate_release_number
         run: |
-          echo ::set-output name=release_number::$( echo ${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }} )
+          echo ::set-output name=release_number::$( echo "${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" )
 #         echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
-
+      
+      - name: test release number
+        run: |
+          echo ${{ steps.generate_release_number.outputs.release_number}}
           
       - name: Build and sonar analyze
         id: sonar_analyze_result
