@@ -47,7 +47,7 @@ jobs:
 
       - name: Sonuclar
         run: |
-          tail -20  ${{ steps.mavenn.outputs.RESULT }} | grep "QUALITY GATE STATUS"  
+          grep "QUALITY GATE STATUS" ${{ steps.mavenn.outputs.RESULT }} 
 
           
   
