@@ -50,7 +50,7 @@ jobs:
                       -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true \
                   )
-          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
+          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSsED" || echo " Status" ) 
 
       - name: Results
         run: |
@@ -68,6 +68,14 @@ jobs:
           echo ${{ needs.build.outputs.sonar_gate_result }}
           
       - name: Check Quality Gate result and Login Build, Push and Deploy
+        run: |
+          if contains( needs.build.outputs.sonar_gate_result, 'PASSED') ; then
+              echo "Evet"
+          else
+              echo "Hayir"
+          fi
+          
+      - name: asdas   
         if: contains( needs.build.outputs.sonar_gate_result, 'PASSED')
         run: |
           echo "PASSED oldu, Hayirlis olsun."
