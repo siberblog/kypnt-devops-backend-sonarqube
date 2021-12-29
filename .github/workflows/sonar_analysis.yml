@@ -9,7 +9,7 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     outputs: 
-      output1: ${{ steps.sonar_analyze_result.outputs.result }}
+      sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -52,7 +52,7 @@ jobs:
                   )
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
 
-      - name: results
+      - name: Results
         run: |
           echo "Result: ${{ steps.sonar_analyze_result.outputs.result }}"
 
@@ -63,15 +63,15 @@ jobs:
     steps:
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          echo ${{ needs.build.outputs.output1 }}
-        
-      - name: Extract Maven project version
-        id: project
-        shell: bash
         run: |
-          echo "Finish date: ${{ steps.date.outputs.date }}"
-          echo $(date +'%Y-%m-%d')
-          pwd
-          ls -la
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          echo ${{ needs.build.outputs.sonar_gate_result }}
+          
+      - name: Check Quality Gate result and Login Build, Push and Deploy
+        if: contains( needs.build.outputs.sonar_gate_result, 'PASSED')
+        run: |
+          echo "PASSED oldu, Hayirlis olsun."
+
+
+
   
