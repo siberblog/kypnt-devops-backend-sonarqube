@@ -39,7 +39,7 @@ jobs:
            SONAR_ORGANIZATION: ${{ steps.pom.outputs.sonar_organization }}
            
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-          -Dsonar.projectKey=$SONAR_ORGANIZATION_$PROJECT_NAME
+          -Dsonar.projectKey=$(SONAR_ORGANIZATION)_$(PROJECT_NAME)_${{ env.SONAR_ORGANIZATION}}
           -Dsonar.qualitygate.wait=true 
           -Dmaven.test.skip=true 
 
