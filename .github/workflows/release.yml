@@ -11,6 +11,7 @@ jobs:
       sonar_organization: ${{ steps.pom.outputs.organization }}
       sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
       sha_short: ${{ steps.commit_hash.outputs.sha_short }}
+      release_number: ${{ steps.generate_release_number.outputs.release_number }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -53,6 +54,13 @@ jobs:
         run: |
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           
+      - name: Generate Relase number
+        id: generate_release_number
+        run: |
+          echo ::set-output name=release_number::$( {{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }} )
+#         echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
+
+          
       - name: Build and sonar analyze
         id: sonar_analyze_result
         env:
@@ -94,18 +102,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: CheckSonarQualityGateResult
     steps:
-      - name: Generate Relase number
-        run: |
-          echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
-
-      - name: Create Releaseasdas
+      - name: Create Releasea
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.RELEASE_VERSION }}
-          release_name: Release ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ needs.build.outputs.release_number }}
+          release_name: Release ${{ needs.build.outputs.release_number }}
           draft: false
           prerelease: false
 
