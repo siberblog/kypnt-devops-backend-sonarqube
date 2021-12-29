@@ -43,12 +43,7 @@ jobs:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          echo "::set-output name=result::$(
-                      mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                        -Dsonar.projectKey=siberblog_kypnt-devops-backend \
-                        -Dsonar.qualitygate.wait=true \
-                        -Dmaven.test.skip=true
-                                            )\n"
+          echo "::set-output name=result::$( mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true )\n"
           echo ${{ steps.sonar_analyze_result.outputs.result }}
           
       # RESULT=$()
