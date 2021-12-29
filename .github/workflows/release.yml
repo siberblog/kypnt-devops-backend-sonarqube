@@ -96,7 +96,7 @@ jobs:
     steps:
       - name: Generate Relase number
         run: |
-          echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ steps.commit_hash.outputs.sha_short }}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
 
       - name: Create Releaseasdas
         id: create_release
