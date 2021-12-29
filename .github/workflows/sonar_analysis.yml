@@ -25,7 +25,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       
-      - name: Extract project name in Maven-pom.xml file
+      - name: Extract project name in Maven pom.xml file
         id: pom
         run: |
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
@@ -33,9 +33,6 @@ jobs:
         # echo ::set-output name=name_old::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
           
       - name: Maven-pom.xml 
-        env:
-          PROJECT_NAME: ${{ steps.pom.outputs.name }}
-          SONAR_ORGANIZATION: ${{ steps.pom.outputs.organization }}
         run: |
           echo "Project name: ${{ steps.pom.outputs.name }}"
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}"         
@@ -45,7 +42,7 @@ jobs:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-          -Dsonar.projectKey=${{ env.PROJECT_NAME }}_$SONAR_ORGANIZATION_$(SONAR_ORGANIZATION)
+          -Dsonar.projectKey=${{ steps.pom.outputs.name }}_${{ steps.pom.outputs.organization }}
           -Dsonar.qualitygate.wait=true 
           -Dmaven.test.skip=true 
 
