@@ -1,3 +1,4 @@
+# maven project template
 name: sonar_analysis
 on:
   pull_request:
@@ -23,10 +24,17 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-          
+      
+      - name: Extract project name in Maven-pom.xml file
+        id: pom
+        run: echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
+       
       - name: Code verify and sonar analyze
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true 
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
+          -Dsonar.projectKey=${{ steps.pom.outputs.name }}
+          -Dsonar.qualitygate.wait=true 
+          -Dmaven.test.skip=true 
 
