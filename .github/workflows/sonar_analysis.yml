@@ -12,21 +12,11 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
+      - name: Sonar Build Breaker
+        uses: ./ 
+        id: buildbreaker
         with:
-          java-version: 11
-   
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-          
-      - name: Code verify and sonar analyze
-        env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify -Dmaven.test.skip=true org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend-second
-
+          sonar_url: 'https://sonarcloud.io'
+          sonar_branch: 'main'
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          project_key: 'sonar_test_github_project'
