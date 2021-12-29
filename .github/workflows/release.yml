@@ -70,7 +70,6 @@ jobs:
         run: |
           echo "::set-output name=date::$(date +'%Y-%m-%d')"
           echo ${{ needs.build.outputs.sonar_gate_result }}
-          
       - name: Check Quality Gate result and Login Build, Push and Deploy
         env:
           COMMIT_VAR: ${{ contains(needs.build.outputs.sonar_gate_result, 'PASSED') }}
@@ -78,10 +77,9 @@ jobs:
           if ${COMMIT_VAR} == true ; then
               echo "Evet"
           else
-              echo "Sonar quality gate is failed."
-    # ::exit::failure
+              echo "Sonar quality gate is failed."      
           fi
-          
+      # ::exit::failure
 
 
   CreateRelease:
