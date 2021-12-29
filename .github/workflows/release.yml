@@ -7,6 +7,7 @@ jobs:
     name: Build
     outputs: 
       project_name: ${{ steps.pom.outputs.name }}
+      project_version: ${{ steps.pom.outputs.version }}
       sonar_organization: ${{ steps.pom.outputs.organization }}
       sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
     runs-on: ubuntu-latest
@@ -38,6 +39,7 @@ jobs:
         id: pom
         run: |
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
+          echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
         # echo ::set-output name=name_old::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)          
       - name: Maven-pom.xml 
@@ -80,4 +82,34 @@ jobs:
               ::exit::failure
           fi
           
+
+
+  CreateRelease:
+    name: CreateRelease
+    runs-on: ubuntu-latest
+    needs: CheckSonarQualityGateResult
+    outputs:
+      sha_short: ${{ steps.commit_hash.outputs.sha_short }}
+    steps:
+      - name: Extract short_sha project version
+        id: commit_hash
+        shell: bash
+        run: |
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Generate Relase number
+        run: |
+          echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ steps.commit_hash.outputs.sha_short }}" >> $GITHUB_ENV
+
+      - name: Create Releaseasdas
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: Release ${{ env.RELEASE_VERSION }}
+          draft: false
+          prerelease: false
+
 
