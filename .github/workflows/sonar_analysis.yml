@@ -50,7 +50,7 @@ jobs:
                       -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true \
                   )
-          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSsED" || echo " Status" ) 
+          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
 
       - name: Results
         run: |
@@ -72,7 +72,10 @@ jobs:
           COMMIT_VAR: ${{ contains(needs.build.outputs.sonar_gate_result, 'PASSED') }}
         run: |
           if ${COMMIT_VAR} == true ; then
-              echo "Evet"
+              echo "Evet: Break 1 ---------"
+              echo ${{ needs.build.outputs.sonar_gate_result }} | grep -o "QUALITY GATE STATUS: PASSED"
+              echo "Break2:   --------"
+              echo ::set-output name=result::$( echo ${{ needs.build.outputs.sonar_gate_result }} | grep -o "QUALITY GATE STATUS: PASSED"  ) 
           else
               echo "Hayir"
           fi
