@@ -72,20 +72,16 @@ jobs:
           COMMIT_VAR: ${{ contains(needs.build.outputs.sonar_gate_result, 'PASSED') }}
         run: |
           if ${COMMIT_VAR} == true ; then
-              echo "Evet: Break 1 ---------"
-              ::exit::failure
-              echo ${{ needs.build.outputs.sonar_gate_result }} | grep -o "QUALITY GATE STATUS: PASSED"
-              echo "Break2:   --------"
-              echo ::set-output name=result::$( echo ${{ needs.build.outputs.sonar_gate_result }} | grep -o "QUALITY GATE STATUS: PASSED"  ) 
+              echo "Evet"
           else
-              echo "Hayir"
+              echo "Sonar quality gate is failed."
+              ::exit::failure
           fi
           
-      - name: asdas   
+      - name: Next step   
         if: contains( needs.build.outputs.sonar_gate_result, 'PASSED')
         run: |
-          ::exit::failure
-          echo "PASSED oldu, Hayirlis olsun."
+          echo "Bir sonraki asamaya geldin"
 
 
 
