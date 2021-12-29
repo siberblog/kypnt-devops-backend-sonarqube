@@ -24,11 +24,11 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
           
-      # - name: Code verify and sonar analyze
-       #  env:
-       #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-       #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-       #  run: mvn -B verify -Dmaven.test.skip=true org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend
+      - name: Code verify and sonar analyze
+        env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify -Dmaven.test.skip=true org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend
 
       - name: Analyze with SonarCloud
         uses: sonarsource/sonarcloud-github-action@master
