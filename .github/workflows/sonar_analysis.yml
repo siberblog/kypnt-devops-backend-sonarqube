@@ -38,21 +38,21 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}"         
       
       - name: Code verify and sonar analyze
-        id: testt
+        id: sonar_analyze_result
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-                        -Dsonar.projectKey=siberblog_kypnt-devops-backend 
-                        -Dsonar.qualitygate.wait=true 
-                        -Dmaven.test.skip=true
+            -Dsonar.projectKey=siberblog_kypnt-devops-backend 
+            -Dsonar.qualitygate.wait=true 
+            -Dmaven.test.skip=true
       # RESULT=$()
       # echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED"
           
       - name: Sonuclar
         run: |
-          echo "${{ steps.testt.outputs }}" | grep -o "QUALITY GATE STATUS: PASSED"
+          echo "${{ steps.sonar_analyze_result.outputs }}" | grep -o "QUALITY GATE STATUS: PASSED"
   
 
           
