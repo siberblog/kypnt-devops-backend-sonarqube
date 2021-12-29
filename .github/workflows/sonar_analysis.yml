@@ -42,27 +42,12 @@ jobs:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true > result.txt
+          echo "::set-output name=RESULT::$( mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true )"
+        id: mavenn
 
       - name: Sonuclar
         run: |
-          cat result.txt | grep "QUALITY GATE STATUS"     
-          pwd
-          ls -la
-          tail -20 result.txt  | grep "QUALITY GATE STATUS"  
-  build_artifact:
-    name: result
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
-        
-      - name: Sonuclar
-        run: |
-          cat result.txt | grep "QUALITY GATE STATUS"     
-          pwd
-          ls -la
-          tail -20 result.txt  | grep "QUALITY GATE STATUS"     
+          tail -20  ${{ steps.mavenn.outputs.RESULT }} | grep "QUALITY GATE STATUS"  
+
           
   
