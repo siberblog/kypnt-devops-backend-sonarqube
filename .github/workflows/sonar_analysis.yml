@@ -73,6 +73,7 @@ jobs:
         run: |
           if ${COMMIT_VAR} == true ; then
               echo "Evet: Break 1 ---------"
+              ::exit::failure
               echo ${{ needs.build.outputs.sonar_gate_result }} | grep -o "QUALITY GATE STATUS: PASSED"
               echo "Break2:   --------"
               echo ::set-output name=result::$( echo ${{ needs.build.outputs.sonar_gate_result }} | grep -o "QUALITY GATE STATUS: PASSED"  ) 
@@ -83,6 +84,7 @@ jobs:
       - name: asdas   
         if: contains( needs.build.outputs.sonar_gate_result, 'PASSED')
         run: |
+          ::exit::failure
           echo "PASSED oldu, Hayirlis olsun."
 
 
