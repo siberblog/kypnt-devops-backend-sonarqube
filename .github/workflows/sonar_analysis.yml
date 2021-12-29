@@ -29,7 +29,7 @@ jobs:
         id: pom
         run: |
           echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
-          echo ::set-output name=organization::$(cat pom.xml | grep "<sonar.organization>")
+          echo ::set-output name=organization::$(xmllint --xpath '/void/sonar.organization[1]/text()' pom.xml)
       
       - name: Maven-pom.xml 
         run: |
