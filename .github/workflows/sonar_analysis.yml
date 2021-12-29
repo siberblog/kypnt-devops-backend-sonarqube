@@ -48,9 +48,8 @@ jobs:
                       -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true \
                   )
-          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASdSED" )
-          
-          
+          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASdSED" || echo "-Status" ) 
+
       - name: results
         run: |
           echo "Result: ${{ steps.sonar_analyze_result.outputs.result }}"
