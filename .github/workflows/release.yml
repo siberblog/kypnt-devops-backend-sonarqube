@@ -79,3 +79,5 @@ jobs:
         run: |
           echo "Finish date: ${{ steps.date.outputs.date }}"
           echo $(date +'%Y-%m-%d')
+          pwd
+          ls -la
