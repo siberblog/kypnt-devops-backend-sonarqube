@@ -58,7 +58,8 @@ jobs:
         id: generate_release_number
         run: |
           echo ${{steps.build.outputs.project_name}} > cikti.log
-          echo "::set-output name=release_number::$(cat cikti.log)"
+          output="$(cat cikti.log)"
+          echo "::set-output name=release_number::$output"
 #          echo "::set-output name=release_number::$( echo $(steps.build.outputs.project_name).$(steps.build.outputs.project_version).$(steps.build.outputs.sha_short) )"
 #         echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
       
