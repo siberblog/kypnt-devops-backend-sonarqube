@@ -79,7 +79,7 @@ jobs:
               echo "Evet"
           else
               echo "Sonar quality gate is failed."
-              ::exit::failure
+    # ::exit::failure
           fi
           
 
