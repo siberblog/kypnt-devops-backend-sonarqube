@@ -44,11 +44,11 @@ jobs:
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           RESULT=$( mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                      -Dsonar.projectKey=siberblog_kypnt-devops-backend \
+                      -Dsonar.projectKey=${{ steps.pom.outputs.organization }} \
                       -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true \
                   )
-          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASdSED" || echo "-Status" ) 
+          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
 
       - name: results
         run: |
