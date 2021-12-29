@@ -29,12 +29,12 @@ jobs:
         id: pom
         run: |
           echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
-          echo ::set-output name=organization::$(xmllint --xpath '/void/sonar.organization[1]/text()' pom.xml)
+          echo ::set-output name=organization::$(xmllint --xpath "sonar.organization" pom.xml)
       
       - name: Maven-pom.xml 
         run: |
-          echo ${{ steps.pom.outputs.organization }}
-          echo ${{ steps.pom.outputs.name }}
+          echo "1- ${{ steps.pom.outputs.organization }}"
+          echo "2- ${{ steps.pom.outputs.name }}"
           
       
       - name: Code verify and sonar analyze
