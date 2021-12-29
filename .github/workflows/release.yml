@@ -57,7 +57,8 @@ jobs:
       - name: Generate Relase number
         id: generate_release_number
         run: |
-          echo ::set-output name=release_number::$( ${{ steps.build.pom.outputs.project_name }})
+          my=${{ steps.build.pom.outputs.project_name }}
+          echo ::set-output name=release_number::$my
 #         echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
       
       - name: test release number
