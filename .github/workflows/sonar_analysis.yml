@@ -33,17 +33,19 @@ jobs:
         # echo ::set-output name=name_old::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
           
       - name: Maven-pom.xml 
+        env:
+          PROJECT_NAME: ${{ steps.pom.outputs.name }}
+          SONAR_ORGANIZATION: ${{ steps.pom.outputs.organization }}
         run: |
-          echo "1- ${{ steps.pom.outputs.organization }}"
-          echo "2- ${{ steps.pom.outputs.name }}"
-          
+          echo "Project name: ${{ steps.pom.outputs.name }}"
+          echo "Sonar organization: ${{ steps.pom.outputs.organization }}"         
       
       - name: Code verify and sonar analyze
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-          -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }}
+          -Dsonar.projectKey=${{ env.PROJECT_NAME }}_$SONAR_ORGANIZATION_$(SONAR_ORGANIZATION)
           -Dsonar.qualitygate.wait=true 
           -Dmaven.test.skip=true 
 
