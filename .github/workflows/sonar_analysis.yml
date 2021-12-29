@@ -50,9 +50,8 @@ jobs:
                   )
           echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED"
           
-      - name: Sonuclar
+      - name: results
         run: |
-          echo "$RESULT  \n\n" 
           echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED"
 
           
