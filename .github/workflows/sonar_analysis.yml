@@ -17,6 +17,6 @@ jobs:
         id: buildbreaker
         with:
           sonar_url: 'https://sonarcloud.io'
-          sonar_branch: 'main'
+          sonar_branch: 'master'
           sonar_token: ${{ secrets.SONAR_TOKEN }}
-          project_key: 'sonar_test_github_project'
+          project_key: 'kypnt-devops-backend'
