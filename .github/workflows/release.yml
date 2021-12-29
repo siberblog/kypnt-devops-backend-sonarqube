@@ -48,6 +48,7 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
           
       - name: Build and sonar analyze
+        id: sonar_analyze_result
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
