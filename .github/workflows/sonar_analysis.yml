@@ -41,10 +41,17 @@ jobs:
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: "RESULT=${{ mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true }}"
+        run: |
+          echo "RESULT=${{ mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=siberblog_kypnt-devops-backend -Dsonar.qualitygate.wait=true -Dmaven.test.skip=true }}"  >> $GITHUB_ENV
 
       - name: Sonuclar
         run: |
-          echo "\n\n\n\n"
+          echo -e "111111-----\n\n\n\n"
           echo $RESULT
+          echo -e "222222------\n\n\n\n"
+          echo $(env.RESULT)
+          echo -e "3333-----\n\n\n\n"
+          echo ${{ env.RESULT }}
+          echo -e "44444------\n\n\n\n"
+          echo "${{ env.RESULT }}"
 
