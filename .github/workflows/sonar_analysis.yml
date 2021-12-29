@@ -28,9 +28,10 @@ jobs:
       - name: Extract project name in Maven-pom.xml file
         id: pom
         run: |
-          echo ::set-output name=name::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
+          echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
-      
+        # echo ::set-output name=name_old::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)
+          
       - name: Maven-pom.xml 
         run: |
           echo "1- ${{ steps.pom.outputs.organization }}"
