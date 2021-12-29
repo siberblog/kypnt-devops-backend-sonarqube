@@ -68,8 +68,10 @@ jobs:
           echo ${{ needs.build.outputs.sonar_gate_result }}
           
       - name: Check Quality Gate result and Login Build, Push and Deploy
+        env:
+          COMMIT_VAR: ${{ contains(needs.build.outputs.sonar_gate_result, 'PASSED') }}
         run: |
-          if contains( needs.build.outputs.sonar_gate_result, 'PASSED') == true ; then
+          if ${COMMIT_VAR} == true ; then
               echo "Evet"
           else
               echo "Hayir"
