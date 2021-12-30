@@ -45,23 +45,23 @@ jobs:
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=sha_short::$(git rev-parse --short HEAD)    
 
-      - name: Get information and generate release number
+      - name: Get project informations
         run: |
           echo "Project name: ${{ steps.pom.outputs.name }}"
           echo "Project version: ${{ steps.pom.outputs.version }}"
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
           echo "Short hash: ${{ steps.pom.outputs.sha_short }}"
       
-      - name: Get information and generate release number
+      - name: Generate release number
         id: generate_release_number
         run: |
-          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}" )  
+          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version.${{ steps.pom.outputs.sha_hash }}" )  
       - name: Get release number
         run: |
           echo "Release number: ${{ steps.generate_release_number.outputs.release_number }}"
 
 
-      - name: Build and sonar analyze
+      - name: Build and Sonar analyze
         id: sonar_analyze_result
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
