@@ -56,6 +56,7 @@ jobs:
         id: generate_release_number
         run: |
           echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}.${{ steps.pom.outputs.sha_short }}" ) 
+          echo "Yeni release number: $release_number"
           
       - name: Get release number
         run: |
