@@ -79,7 +79,13 @@ jobs:
           pwd
           ls -la 
 
-
+      - name: My files
+        uses: actions/upload-artifact@v2
+        with:
+          name: my_repo
+          path: ./
+          retention-days: 1
+          
   CheckSonarQualityGateResult:
     name: Check Sonar Quality Gate Result
     runs-on: ubuntu-latest
@@ -87,14 +93,30 @@ jobs:
     outputs:
       release_number: ${{ needs.build.outputs.release_number }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Retrieve my files
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-artifact
+          path: ./
+        
+      - name: Check PWD and Files
+        run: |
+          pwd
+          ls -la
+          
       - name: Get release number
         run: |
           echo ${{ needs.build.outputs.release_number }}
+          
       - name: Get current date
         id: date
         run: |
           echo "::set-output name=date::$(date +'%Y-%m-%d')"
           echo ${{ needs.build.outputs.sonar_gate_result }}
+          
       - name: Check Quality Gate result and Login Build, Push and Deploy
         env:
           COMMIT_VAR: ${{ contains(needs.build.outputs.sonar_gate_result, 'PASSED') }}
@@ -105,10 +127,7 @@ jobs:
               echo "Sonar quality gate is failed."
               exit_with_success
           fi
-      - name: Check PWD and Files
-        run: |
-          pwd
-          ls -la 
+
 
 
   CreateRelease:
