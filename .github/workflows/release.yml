@@ -9,9 +9,9 @@ jobs:
       project_name: ${{ steps.pom.outputs.name }}
       project_version: ${{ steps.pom.outputs.version }}
       sha_short: ${{ steps.pom.outputs.sha_short }}
+      release_number: ${{ steps.pom.outputs.release_number }}
       sonar_organization: ${{ steps.pom.outputs.organization }}
       sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
-      release_number: ${{ steps.generate_release_number.outputs.release_number }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -39,22 +39,20 @@ jobs:
 
       - name: Extract project informations
         id: pom
-        env:
-          RELEASE_VERSION: test
-          RELEASE_NUMBER2: ${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}.${{ steps.pom.outputs.sha_short }}
-      
         run: |
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
-          echo ::set-output name=sha_short::$(git rev-parse --short HEAD)       
+          echo ::set-output name=sha_short::$(git rev-parse --short HEAD)
+          echo ::set-output name=release_number::$( ${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }} )
 
-      - name: Maven-pom.xml 
+      - name: Get information
         run: |
           echo "Project name: ${{ steps.pom.outputs.name }}"
           echo "Project version: ${{ steps.pom.outputs.version }}"
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
-          echo "Short hash: ${{ steps.pom.outputs.sha_short }}" 
+          echo "Short hash: ${{ steps.pom.outputs.sha_short }}"
+          echo "Release number: ${{ steps.pom.outputs.release_number }}"
 
       - name: test release number
         run: |
