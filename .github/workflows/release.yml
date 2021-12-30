@@ -11,7 +11,7 @@ jobs:
       sha_short: ${{ steps.pom.outputs.sha_short }}
       release_number: ${{ steps.generate_release_number.outputs.release_number }}
       sonar_organization: ${{ steps.pom.outputs.organization }}
-      sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
+      sonar_gate_result: ${{ steps.build_sonar_analyze.outputs.result }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -62,7 +62,7 @@ jobs:
 
 
       - name: Build and Sonar analyze
-        id: sonar_analyze_result
+        id: build_sonar_analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
