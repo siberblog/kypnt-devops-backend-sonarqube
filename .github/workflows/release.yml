@@ -130,18 +130,12 @@ jobs:
       - name: Get release number
         run: |
           echo ${{ needs.CheckSonarQualityGateResult.outputs.release_number }}
-
-      - name: Docker login
-        env:
-          DOCKERHUB_USER: ${{secrets.DOCKERHUB_USERNAME}}
-          DOCKERHUB_PASS: ${{secrets.DOCKERHUB_PASSWORD}}
-        run: |
-          docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
           
       - name: Build the Docker image  
         run: |
           pwd
-          docker build . --file Dockerfile --tag=sibeblog/aaa
+          ls -la
+          docker build . --tag=sibeblog/aaa
           
       - name: Docker Push
         run: |
