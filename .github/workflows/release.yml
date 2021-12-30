@@ -41,6 +41,8 @@ jobs:
         id: pom
         env:
           RELEASE_VERSION: test
+          RELEASE_NUMBER2: ${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}.${{ steps.pom.outputs.sha_short }}
+      
         run: |
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
@@ -54,15 +56,11 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
           echo "Short hash: ${{ steps.pom.outputs.sha_short }}" 
 
-      - name: Generate Relase number
-        id: generate_release_number
-        env: 
-          RELEASE_NUMBER2: ${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}.${{ steps.pom.outputs.sha_short }}
-      
       - name: test release number
         run: |
           echo "1111"
           echo ${{ steps.generate_release_number.outputs.release_number}}
+          echo "2222"
           echo ${{ env.RELEASE_NUMBER2 }}
           
       - name: Build and sonar analyze
