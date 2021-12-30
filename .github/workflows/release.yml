@@ -14,24 +14,6 @@ jobs:
       sonar_gate_result: ${{ steps.build_sonar_analyze.outputs.result }}
     runs-on: ubuntu-latest
     steps:
-      - name: make new folder
-        run: mkdir test
-      
-      - name: Retrieve my files
-        uses: actions/download-artifact@v2
-        with:
-          name: my_repo
-          path: ./test
-
-      - name: Check PWD and Files
-        run: |
-          echo "0-------"
-          pwd
-          echo "1-------"
-          ls -la
-          echo "2-------"
-          ls -la ./test
-          
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -92,48 +74,10 @@ jobs:
                   )
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
 
-      - name: Check PWD and Files
-        run: |
-          pwd
-          ls -la 
-
-      - name: My files
-        uses: actions/upload-artifact@v2
-        with:
-          name: my_repo
-          path: ./
-          retention-days: 1
-          
-  CheckSonarQualityGateResult:
-    name: Check Sonar Quality Gate Result
-    runs-on: ubuntu-latest
-    needs: build
-    outputs:
-      release_number: ${{ needs.build.outputs.release_number }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Retrieve my files
-        uses: actions/download-artifact@v2
-        with:
-          name: my_repo
-          path: ./
-        
-      - name: Check PWD and Files
-        run: |
-          pwd
-          ls -la
-          
-      - name: Get release number
-        run: |
-          echo ${{ needs.build.outputs.release_number }}
-          
       - name: Get current date
         id: date
         run: |
           echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          echo ${{ needs.build.outputs.sonar_gate_result }}
           
       - name: Check Quality Gate result and Login Build, Push and Deploy
         env:
@@ -146,24 +90,14 @@ jobs:
               exit_with_success
           fi
 
-
-
-  CreateRelease:
-    name: Create Release
-    runs-on: ubuntu-latest
-    needs: CheckSonarQualityGateResult
-    steps:
-      - name: Get release number
-        run: |
-          echo ${{ needs.CheckSonarQualityGateResult.outputs.release_number }}
       - name: Create Releasea
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.CheckSonarQualityGateResult.outputs.release_number }}
-          release_name: Release ${{ needs.CheckSonarQualityGateResult.outputs.release_number }}
+          tag_name: ${{ steps.build_sonar_analyze.outputs.result }}
+          release_name: Release ${{ steps.build_sonar_analyze.outputs.result }}
           draft: false
           prerelease: false
 
