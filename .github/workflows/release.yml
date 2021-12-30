@@ -43,8 +43,6 @@ jobs:
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
-          asd=$(git rev-parse --short HEAD)
-          echo $asd
           echo ::set-output name=sha_short::$(git rev-parse --short HEAD)  
 
       - name: Get project informations
@@ -57,11 +55,11 @@ jobs:
       - name: Generate release number
         id: generate_release_number
         run: |
-          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}.${{ steps.pom.outputs.sha_short }}" )  
+          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}.${{ steps.pom.outputs.sha_short }}" ) 
+          
       - name: Get release number
         run: |
           echo "Release number: ${{ steps.generate_release_number.outputs.release_number }}"
-
 
       - name: Build and Sonar analyze
         id: build_sonar_analyze
@@ -99,9 +97,8 @@ jobs:
           if ${COMMIT_VAR} == true ; then
               echo "Evet"
           else
-              echo "Sonar quality gate is failed."      
+              echo "Sonar quality gate is failed. ::exit::failure"
           fi
-      # ::exit::failure
 
 
   CreateRelease:
