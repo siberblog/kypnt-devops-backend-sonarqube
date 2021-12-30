@@ -50,7 +50,9 @@ jobs:
         run: |
           echo "Project name: ${{ steps.pom.outputs.name }}"
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
-      
+          echo ${{ env.RELEASE_VERSION }}
+          echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
+          echo ${{ env.RELEASE_VERSION }}
       - name: Extract short_sha project version
         id: commit_hash
         run: |
@@ -59,10 +61,10 @@ jobs:
       - name: Generate Relase number
         id: generate_release_number
         run: |
-          echo $ {{ env.RELEASE_VERSION }}
+          echo ${{ env.RELEASE_VERSION }}
           echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
-          echo $ {{ env.RELEASE_VERSION }}
-          echo ::set-output name=release_number::$( env.RELEASE_VERSION )
+          echo ${{ env.RELEASE_VERSION }}
+          echo ::set-output name=release_number::${{ env.RELEASE_VERSION }}
           
       - name: test release number
         run: |
