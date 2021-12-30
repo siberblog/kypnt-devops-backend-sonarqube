@@ -40,7 +40,7 @@ jobs:
       - name: Extract project name in Maven pom.xml file
         id: pom
         env:
-          RELEASE_VERSION: "test.1.2.3"
+          RELEASE_VERSION: test
         run: |
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
@@ -59,9 +59,9 @@ jobs:
       - name: Generate Relase number
         id: generate_release_number
         run: |
-          echo $RELEASE_VERSION
+          echo $ {{ env.RELEASE_VERSION }}
           echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ needs.build.outputs.sha_short }}" >> $GITHUB_ENV
-          echo $RELEASE_VERSION
+          echo $ {{ env.RELEASE_VERSION }}
           echo ::set-output name=release_number::$( env.RELEASE_VERSION )
           
       - name: test release number
