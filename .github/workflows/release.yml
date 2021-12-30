@@ -44,7 +44,7 @@ jobs:
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=sha_short::$(git rev-parse --short HEAD)
-          echo ::set-output name=release_number::$( ${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }} )
+          echo ::set-output name=release_number::$( echo ${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }} )
 
       - name: Get information
         run: |
