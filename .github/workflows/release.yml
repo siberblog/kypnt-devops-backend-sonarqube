@@ -98,7 +98,6 @@ jobs:
               echo "Evet"
           else
               echo "Sonar quality gate is failed."
-              ::exit::failure
               exit_with_success
           fi
 
