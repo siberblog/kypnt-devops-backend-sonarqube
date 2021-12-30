@@ -81,7 +81,7 @@ jobs:
           
       - name: Check Quality Gate result and Login Build, Push and Deploy
         env:
-          COMMIT_VAR: ${{ contains(needs.build.outputs.sonar_gate_result, 'PASSED') }}
+          COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
         run: |
           if ${COMMIT_VAR} == true ; then
               echo "Evet"
