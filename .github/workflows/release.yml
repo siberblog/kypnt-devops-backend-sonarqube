@@ -4,7 +4,7 @@ on:
     branches: [ master ]
 jobs:
   build:
-    name: build
+    name: Build and Sonar analyze
     outputs: 
       project_name: ${{ steps.pom.outputs.name }}
       project_version: ${{ steps.pom.outputs.version }}
@@ -76,7 +76,7 @@ jobs:
 
 
   CheckSonarQualityGateResult:
-    name: CheckSonarQualityGateResult
+    name: Check Sonar Quality GateResult
     runs-on: ubuntu-latest
     needs: build
     outputs:
@@ -97,12 +97,13 @@ jobs:
           if ${COMMIT_VAR} == true ; then
               echo "Evet"
           else
-              echo "Sonar quality gate is failed. ::exit::failure"
+              echo "Sonar quality gate is failed."
+              echo ::exit::failure
           fi
 
 
   CreateRelease:
-    name: CreateRelease
+    name: Create Release
     runs-on: ubuntu-latest
     needs: CheckSonarQualityGateResult
     steps:
