@@ -54,7 +54,7 @@ jobs:
         run: |
           echo "New release number: ${{ steps.generate_release_number.outputs.release_number }}"
 
-      - name: Build and Sonar analyze
+      - name: Maven Build and Sonar analyze
         id: build_sonar_analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -65,22 +65,17 @@ jobs:
                       -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true \
                   )
-          echo $RESULT
+          echo "$RESULT"
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
-
-      - name: Get current date
-        id: date
-        run: |
-          echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          
-      - name: Check Quality Gate result and Login Build, Push and Deploy
+         
+      - name: Check Quality Gate Result
         env:
           COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
         run: |
           if ${COMMIT_VAR} == true ; then
-              echo "Evet"
+              echo "QUALITY GATE STATUS: PASSED"
           else
-              echo "Sonar quality gate is failed."
+              echo "SQUALITY GATE STATUS: FAILED"
               exit_with_success
           fi
 
@@ -95,3 +90,7 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Get current date
+        id: date
+        run: |
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
