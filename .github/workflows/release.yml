@@ -14,6 +14,24 @@ jobs:
       sonar_gate_result: ${{ steps.build_sonar_analyze.outputs.result }}
     runs-on: ubuntu-latest
     steps:
+      - name: make new folder
+        run: mkdir test
+      
+      - name: Retrieve my files
+        uses: actions/download-artifact@v2
+        with:
+          name: my_repo
+          path: ./test
+
+      - name: Check PWD and Files
+        run: |
+          echo "0-------"
+          pwd
+          echo "1-------"
+          ls -la
+          echo "2-------"
+          ls -la ./test
+          
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -99,7 +117,7 @@ jobs:
       - name: Retrieve my files
         uses: actions/download-artifact@v2
         with:
-          name: docker-artifact
+          name: my_repo
           path: ./
         
       - name: Check PWD and Files
