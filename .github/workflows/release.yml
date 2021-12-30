@@ -5,13 +5,6 @@ on:
 jobs:
   build:
     name: Build and Sonar Analysis
-    outputs: 
-      project_name: ${{ steps.pom.outputs.name }}
-      project_version: ${{ steps.pom.outputs.version }}
-      sha_short: ${{ steps.pom.outputs.sha_short }}
-      release_number: ${{ steps.generate_release_number.outputs.release_number }}
-      sonar_organization: ${{ steps.pom.outputs.organization }}
-      sonar_gate_result: ${{ steps.build_sonar_analyze.outputs.result }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -97,8 +90,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.build_sonar_analyze.outputs.result }}
-          release_name: Release ${{ steps.build_sonar_analyze.outputs.result }}
+          tag_name: ${{ steps.generate_release_number.outputs.release_number }}
+          release_name: Release ${{ steps.generate_release_number.outputs.release_number }}
           draft: false
           prerelease: false
 
