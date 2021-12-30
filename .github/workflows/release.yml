@@ -43,7 +43,7 @@ jobs:
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
-          asd=echo "$(git rev-parse --short HEAD)"
+          echo "asd=$(git rev-parse --short HEAD)"
           echo $asd
           echo ::set-output name=sha_short::$asd  
 
