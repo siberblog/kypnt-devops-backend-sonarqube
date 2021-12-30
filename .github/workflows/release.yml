@@ -74,6 +74,12 @@ jobs:
                   )
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
 
+      - name: Check PWD and Files
+        run: |
+          pwd
+          ls -la 
+          ls
+
 
   CheckSonarQualityGateResult:
     name: Check Sonar Quality Gate Result
@@ -100,6 +106,11 @@ jobs:
               echo "Sonar quality gate is failed."
               exit_with_success
           fi
+      - name: Check PWD and Files
+        run: |
+          pwd
+          ls -la 
+          ls
 
 
   CreateRelease:
@@ -127,14 +138,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: CheckSonarQualityGateResult
     steps:
+      - name: Check PWD and Files
+        run: |
+          pwd
+          ls -la 
+          ls
+    
       - name: Get release number
         run: |
           echo ${{ needs.CheckSonarQualityGateResult.outputs.release_number }}
           
       - name: Build the Docker image  
         run: |
-          pwd
-          ls -la
           docker build . --tag=sibeblog/aaa
           
       - name: Docker Push
