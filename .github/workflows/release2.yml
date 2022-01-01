@@ -90,7 +90,7 @@ jobs:
         uses: docker://decathlon/release-notes-generator-action:2.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USE_MILESTONE_TITLE: "true"
+          USE_MILESTONE_TITLE: "false"
           FILENAME: ReleaseNotes.md
 
       - run: ReleaseNotes.md
