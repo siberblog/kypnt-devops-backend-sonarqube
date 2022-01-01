@@ -40,11 +40,11 @@ jobs:
 
       - name: Get project informations
         run: |
-          echo "Project name: ${{ steps.pom.outputs.name }}"
-          echo "Project version: ${{ steps.pom.outputs.version }}"
-          echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
-          echo "Short hash: ${{ steps.pom.outputs.sha_short }}"
-
+          echo -e "Project name: \033[32;1;4m${{ steps.pom.outputs.name }}\033[0m"
+          echo -e "Project version: \033[32;1;4m${{ steps.pom.outputs.version }}\033[0m"
+          echo -e "Sonar organization: \033[32;1;4m${{ steps.pom.outputs.organization }}\033[0m" 
+          echo -e "Short hash: \033[32;1;4m${{ steps.pom.outputs.sha_short }}\033[0m"
+      
       - name: Maven Build and Sonar analyze
         id: build_sonar_analyze
         continue-on-error: true
@@ -52,26 +52,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          RESULT=$( mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                       -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
                       -Dsonar.qualitygate.wait=true \
-                      -Dsonar.qualitygate.timeout=300 \
                       -Dsonar.qualitygate='QualityGate-Percent70' \
-                      -Dmaven.test.skip=true \
-                  )
-          echo "$RESULT"
-          echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
+                      -Dsonar.qualitygate.timeout=300 \
+                      -Dmaven.test.skip=true 
+          echo -e "\033[32;1;4mQUALITY GATE STATUS: PASSED\033[0m"
+        
 
       - name: Check Quality Gate Result
-        env:
-          COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
+        if: steps.build_sonar_analyze.outcome == 'failure'
         run: |
-          if ${COMMIT_VAR} == true ; then
-              echo -e "\033[32;1;4mQUALITY GATE STATUS: PASSED\033[0m"
-          else
-              echo -e "\033[31;1;4mQUALITY GATE STATUS: FAILED\033[0m"
-              exit 1
-          fi   
+          echo -e "\033[31;1;4mQUALITY GATE STATUS: FAILED\033[0m"
+          exit 1
 
 
       - name: Generate release number
