@@ -56,8 +56,6 @@ jobs:
 
       - name: Maven Build and Sonar analyze
         id: build_sonar_analyze
-        if: always()
-              #continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
