@@ -96,18 +96,6 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-      - name: Branch head release
-        uses: johnwbyrd/update-release@v1.0.0
-        # if: steps.make.outputs.RELEASE_BRANCH != ''
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          release: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
-          tag: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
-          prerelease: true
-          message: "Development build on branch ${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}"
-          #files: ${{ steps.compute-branch.outputs.RELEASE_FILE }}
-
-
 
       - name: Create Releasea
         id: create_release
@@ -115,10 +103,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.generate_release_number.outputs.release_number }}
-          release_name: Release ${{ steps.generate_release_number.outputs.release_number }}
+          tag_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
+          release_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
           draft: false
-          prerelease: false
+          prerelease: true
+          message: "Development build on branch ${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}"
+          
 
       - name: Get current date
         id: date
