@@ -41,6 +41,7 @@ jobs:
       
       - name: Code verify and sonar analyze
         id: sonar_analyze_result
+        if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
