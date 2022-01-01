@@ -40,6 +40,7 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}"         
       
       - name: Code verify and sonar analyze
+        id: build_sonar_analyze
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -48,3 +49,9 @@ jobs:
           mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                       -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
                       -Dmaven.test.skip=true 
+      
+      - name: Check Quality Gate Result
+        if: steps.build_sonar_analyze.outcome == 'failure'
+        run: |
+          echo -e "\033[31;1;4mQUALITY GATE STATUS: FAILED\033[0m"
+          exit 1
