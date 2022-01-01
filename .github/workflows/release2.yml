@@ -81,7 +81,23 @@ jobs:
               echo -e "\033[31;1;4mQUALITY GATE STATUS: FAILED\033[0m"
               exit 1
           fi   
-     
+
+
+      # delete-previous-branch-release:
+      - name: compute branch name
+        id: compute-branch
+        run: echo "${{ github.ref }}" | sed "s,^refs/heads/,::set-output name=RELEASE_BRANCH::,"
+      - uses: dev-drprasad/delete-tag-and-release@v0.1.2
+        if: startswith(github.ref, 'refs/heads/')
+        with:
+            delete_release: true # default: false
+            tag_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-LATEST"
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
       - name: Create Releasea
         id: create_release
         uses: actions/create-release@v1
