@@ -40,8 +40,6 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}"         
       
       - name: Code verify and sonar analyze
-        id: sonar_analyze_result
-        if: always()
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -49,5 +47,4 @@ jobs:
         run: |
           mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                       -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
-                      -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true 
