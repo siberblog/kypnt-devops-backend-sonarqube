@@ -76,16 +76,11 @@ jobs:
           COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
         run: |
           if ${COMMIT_VAR} == true ; then
-              echo ::set-output name=SELECTED_COLOR::green
-              echo "QUALITY GATE STATUS: PASSED"
-              echo -e "\033[31;1;4mQUALITY GATE STATUS: PASSED\033[0m"
+              echo -e "\033[32;1;4mQUALITY GATE STATUS: PASSED\033[0m"
           else
-              echo ::set-output name=SELECTED_COLOR::red
-              echo "QUALITY GATE STATUS: FAILED"
               echo -e "\033[31;1;4mQUALITY GATE STATUS: PASSED\033[0m"
               exit 1
-          fi
-          
+          fi   
      
       - name: Create Releasea
         id: create_release
