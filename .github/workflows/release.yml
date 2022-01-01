@@ -64,6 +64,8 @@ jobs:
           RESULT=$( mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                       -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
                       -Dsonar.qualitygate.wait=true \
+                      -Dsonar.qualitygate="QualityGate-Percent70"
+                      -Dsonar.qualitygate.timeout=300
                       -Dmaven.test.skip=true \
                   )
           echo "$RESULT"
@@ -81,7 +83,6 @@ jobs:
           fi
           
      
-
       - name: Create Releasea
         id: create_release
         uses: actions/create-release@v1
