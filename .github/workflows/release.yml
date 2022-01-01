@@ -67,10 +67,10 @@ jobs:
                       -Dsonar.qualitygate.timeout=300 \
                       -Dmaven.test.skip=true \
                   )
-                  # -Dsonar.qualitygate="QualityGate-Percent70"
           echo "$RESULT"
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
-   
+        # -Dsonar.qualitygate="QualityGate-Percent70"
+        
       - name: Check Quality Gate Result
         env:
           COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
