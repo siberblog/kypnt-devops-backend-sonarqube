@@ -79,7 +79,7 @@ jobs:
               echo "QUALITY GATE STATUS: PASSED"
           else
               echo "QUALITY GATE STATUS: FAILED"
-              exit 0
+              exit 1
           fi
           
      
