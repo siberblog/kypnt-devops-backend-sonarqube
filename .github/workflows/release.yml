@@ -76,10 +76,8 @@ jobs:
           COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
         run: |
           if ${COMMIT_VAR} == true ; the
-              print('\u001b[32mQUALITY GATE STATUS: PASSED\u001b[0m')
               echo "QUALITY GATE STATUS: PASSED"
           else
-              print('\u001b[31mSQUALITY GATE STATUS: FAILED\u001b[0m')
               echo "QUALITY GATE STATUS: FAILED"
               exit 0
           fi
