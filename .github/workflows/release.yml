@@ -78,7 +78,7 @@ jobs:
           if ${COMMIT_VAR} == true ; then
               echo -e "\033[32;1;4mQUALITY GATE STATUS: PASSED\033[0m"
           else
-              echo -e "\033[31;1;4mQUALITY GATE STATUS: PASSED\033[0m"
+              echo -e "\033[31;1;4mQUALITY GATE STATUS: FAILED\033[0m"
               exit 1
           fi   
      
