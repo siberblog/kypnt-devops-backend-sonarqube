@@ -48,4 +48,5 @@ jobs:
         run: |
           mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                       -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
+                      -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true 
