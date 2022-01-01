@@ -45,14 +45,7 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
           echo "Short hash: ${{ steps.pom.outputs.sha_short }}"
 
-      - name: Generate release number
-        id: generate_release_number
-        run: |
-          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}" ) 
 
-      - name: Get release number
-        run: |
-          echo "New release number: ${{ steps.generate_release_number.outputs.release_number }}"
 
       - name: Maven Build and Sonar analyze
         id: build_sonar_analyze
@@ -84,6 +77,24 @@ jobs:
           fi   
 
 
+      - name: Generate release number
+        id: generate_release_number
+        run: |
+          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}" ) 
+
+      - name: Get release number
+        run: |
+          echo "New release number: ${{ steps.generate_release_number.outputs.release_number }}"
+
+      - name: Create Release Notes
+        uses: docker://decathlon/release-notes-generator-action:2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USE_MILESTONE_TITLE: "true"
+          FILENAME: ReleaseNotes.md
+
+      - run: ReleaseNotes.md
+      
       # delete-previous-branch-release:
       - name: compute branch name
         id: compute-branch
@@ -107,8 +118,10 @@ jobs:
           release_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
           draft: false
           prerelease: false
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-            - Third Change
+          body: "ReleaseNotes.md"
+          
+          #|
+          #  Changes in this Release
+          #  - First Change
+          #  - Second Change
+          #  - Third Change
