@@ -76,10 +76,11 @@ jobs:
           if ${COMMIT_VAR} == true ; then
               echo "QUALITY GATE STATUS: PASSED"
           else
-              echo "SQUALITY GATE STATUS: FAILED"                    
+              echo "SQUALITY GATE STATUS: FAILED"
+              exit_with_success
           fi
           
-    # exit_with_success
+     
 
       - name: Create Releasea
         id: create_release
