@@ -56,6 +56,7 @@ jobs:
 
       - name: Maven Build and Sonar analyze
         id: build_sonar_analyze
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -67,7 +68,11 @@ jobs:
                   )
           echo "$RESULT"
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
-         
+      
+      - name: Check Quality Gate status
+        if: failure()
+        run: echo "Failureeeeeeeee"
+   
       - name: Check Quality Gate Result
         env:
           COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
