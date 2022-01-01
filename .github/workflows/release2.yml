@@ -45,8 +45,6 @@ jobs:
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
           echo "Short hash: ${{ steps.pom.outputs.sha_short }}"
 
-
-
       - name: Maven Build and Sonar analyze
         id: build_sonar_analyze
         continue-on-error: true
@@ -58,11 +56,11 @@ jobs:
                       -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
                       -Dsonar.qualitygate.wait=true \
                       -Dsonar.qualitygate.timeout=300 \
+                      -Dsonar.qualitygate='QualityGate-Percent70' \
                       -Dmaven.test.skip=true \
                   )
           echo "$RESULT"
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
-        # -Dsonar.qualitygate="QualityGate-Percent70"
 
 
       - name: Check Quality Gate Result
@@ -79,16 +77,11 @@ jobs:
 
       - name: Generate release number
         id: generate_release_number
-        run: |
-          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}" ) 
+        run: echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}" ) 
+      - run: echo "New release number:\033[32;1;4m${{ steps.generate_release_number.outputs.release_number }}\033[0m"
 
-      - name: Get release number
-        run: |
-          echo "New release number: ${{ steps.generate_release_number.outputs.release_number }}"
-
-      
       # delete-previous-branch-release:
-      - name: compute branch name
+      - name: Compute Branch Name
         id: compute-branch
         run: echo "${{ github.ref }}" | sed "s,^refs/heads/,::set-output name=RELEASE_BRANCH::,"
       - uses: dev-drprasad/delete-tag-and-release@v0.1.2
@@ -99,7 +92,6 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
       - name: Create Releasea
         id: create_release
         uses: actions/create-release@v1
@@ -107,7 +99,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
-          release_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-${{ steps.pom.outputs.sha_short }}-LATEST"
+          release_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
           draft: false
           prerelease: false
           body: |
