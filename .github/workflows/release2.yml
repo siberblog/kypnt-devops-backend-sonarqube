@@ -106,7 +106,7 @@ jobs:
           tag_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
           release_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
           draft: false
-          prerelease: true
+          prerelease: false
           body: |
             Changes in this Release
             - First Change
