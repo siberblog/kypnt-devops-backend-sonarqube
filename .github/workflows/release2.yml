@@ -107,7 +107,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
-          release_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-LATEST"
+          release_name: "${{ steps.compute-branch.outputs.RELEASE_BRANCH }}-${{ steps.generate_release_number.outputs.release_number }}-${{ steps.generate_release_number.outputs.sha_short }}-LATEST"
           draft: false
           prerelease: false
           body: |
