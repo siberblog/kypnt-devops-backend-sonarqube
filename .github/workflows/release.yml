@@ -77,7 +77,7 @@ jobs:
               echo "QUALITY GATE STATUS: PASSED"
           else
               echo "SQUALITY GATE STATUS: FAILED"
-              exit_with_success
+              run: exit_with_success
           fi
           
      
