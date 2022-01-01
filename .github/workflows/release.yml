@@ -4,12 +4,7 @@ on:
     branches: [ master ]
 jobs:
   build:
-    name: Build
-    outputs: 
-      project_name: ${{ steps.pom.outputs.name }}
-      project_version: ${{ steps.pom.outputs.version }}
-      sonar_organization: ${{ steps.pom.outputs.organization }}
-      sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
+    name: Build and Sonar Analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -35,19 +30,34 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Extract project name in Maven pom.xml file
+      - name: Extract project informations
         id: pom
         run: |
           echo ::set-output name=name::$(grep "<name>" pom.xml | awk -F "name" '{gsub(">|</","",$0); print $2;}')
           echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)          
           echo ::set-output name=organization::$(grep "<sonar.organization>" pom.xml | awk -F "sonar.organization" '{gsub(">|</","",$0); print $2;}')
-        # echo ::set-output name=name_old::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.name}' --non-recursive exec:exec)          
-      - name: Maven-pom.xml 
+          echo ::set-output name=sha_short::$(git rev-parse --short HEAD)  
+
+      - name: Get project informations
         run: |
           echo "Project name: ${{ steps.pom.outputs.name }}"
+          echo "Project version: ${{ steps.pom.outputs.version }}"
           echo "Sonar organization: ${{ steps.pom.outputs.organization }}" 
+          echo "Short hash: ${{ steps.pom.outputs.sha_short }}"
+      
+      - name: Generate release number
+        id: generate_release_number
+        run: |
+          echo ::set-output name=release_number::$( echo "${{ steps.pom.outputs.name }}.${{ steps.pom.outputs.version }}.${{ steps.pom.outputs.sha_short }}" ) 
           
-      - name: Build and sonar analyze
+      - name: Get release number
+        run: |
+          echo "New release number: ${{ steps.generate_release_number.outputs.release_number }}"
+
+      - name: Maven Build and Sonar analyze
+        id: build_sonar_analyze
+        if: always()
+              #continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -57,59 +67,32 @@ jobs:
                       -Dsonar.qualitygate.wait=true \
                       -Dmaven.test.skip=true \
                   )
+          echo "$RESULT"
           echo ::set-output name=result::$( echo $RESULT | grep -o "QUALITY GATE STATUS: PASSED" || echo " Status" ) 
-
-
-  CheckSonarQualityGateResult:
-    name: CheckSonarQualityGateResult
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Get current date
-        id: date
-        run: |
-          echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          echo ${{ needs.build.outputs.sonar_gate_result }}
-          
-      - name: Check Quality Gate result and Login Build, Push and Deploy
+         
+      - name: Check Quality Gate Result
         env:
-          COMMIT_VAR: ${{ contains(needs.build.outputs.sonar_gate_result, 'PASSED') }}
+          COMMIT_VAR: ${{ contains(steps.build_sonar_analyze.outputs.result, 'PASSED') }}
         run: |
           if ${COMMIT_VAR} == true ; then
-              echo "Evet"
+              echo "QUALITY GATE STATUS: PASSED"
           else
-              echo "Sonar quality gate is failed."
-              ::exit::failure
+              echo "SQUALITY GATE STATUS: FAILED"
+              exit_with_success
           fi
-          
 
-
-  CreateRelease:
-    name: CreateRelease
-    runs-on: ubuntu-latest
-    needs: CheckSonarQualityGateResult
-    outputs:
-      sha_short: ${{ steps.commit_hash.outputs.sha_short }}
-    steps:
-      - name: Extract short_sha project version
-        id: commit_hash
-        shell: bash
-        run: |
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-
-      - name: Generate Relase number
-        run: |
-          echo "RELEASE_VERSION=${{ needs.build.outputs.project_name }}.${{ needs.build.outputs.project_version }}.${{ steps.commit_hash.outputs.sha_short }}" >> $GITHUB_ENV
-
-      - name: Create Releaseasdas
+      - name: Create Releasea
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.RELEASE_VERSION }}
-          release_name: Release ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ steps.generate_release_number.outputs.release_number }}
+          release_name: Release ${{ steps.generate_release_number.outputs.release_number }}
           draft: false
           prerelease: false
 
-
+      - name: Get current date
+        id: date
+        run: |
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
