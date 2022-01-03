@@ -48,7 +48,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                      -Dsonar.projectKey=siberblog_kypnt-devops-backend-sonarqube
+                      -Dsonar.projectKey=siberblog_kypnt-devops-backend-sonarqube \
                       -Dsonar.qualitygate.wait=true \
                       -Dsonar.qualitygate.timeout=300 \
                       -Dmaven.test.skip=true 
