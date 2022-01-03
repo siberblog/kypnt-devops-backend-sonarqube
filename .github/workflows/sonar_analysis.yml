@@ -45,13 +45,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                      -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
+                      -Dsonar.projectKey=siberblog_kypnt-devops-backend-sonarqube
                       -Dsonar.qualitygate.wait=true \
                       -Dsonar.qualitygate.timeout=300 \
                       -Dmaven.test.skip=true 
-      
+      # -Dsonar.projectKey=${{ steps.pom.outputs.organization }}_${{ steps.pom.outputs.name }} \
+                      
       - name: Check Quality Gate Result
         if: steps.build_sonar_analyze.outcome == 'failure'
         run: |
