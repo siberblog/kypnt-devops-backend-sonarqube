@@ -13,6 +13,9 @@ jobs:
     outputs: 
       sonar_gate_result: ${{ steps.sonar_analyze_result.outputs.result }}
     steps:
+      - name: event
+        run: |
+          echo "${{ github.event.client_payload.env}}"
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
