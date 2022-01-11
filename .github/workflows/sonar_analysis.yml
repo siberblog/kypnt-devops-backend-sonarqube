@@ -1,6 +1,8 @@
 # maven project template
 name: sonar_analysis
 on:
+  repository_dispatch:
+    types: [build]
   pull_request:
     types: [opened, synchronize, reopened]
     
